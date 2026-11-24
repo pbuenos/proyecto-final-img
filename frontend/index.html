@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analizador de hojas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true">✿</span>
+      <span><strong>Herbario visual</strong><small>Analisis de hojas · TP Final</small></span>
+    </a>
+    <span class="server-status" id="server-status">Conectando con el backend...</span>
+  </header>
+
+  <main class="page">
+    <section class="intro">
+      <p class="eyebrow">PROCESAMIENTO DE IMAGENES</p>
+      <h1>Una hoja, paso a paso.</h1>
+      <p>Subi fotos de hojas sobre un fondo que contraste. Observa como la mascara HSV, la morfologia y los contornos ayudan a aislarlas y medirlas.</p>
+    </section>
+
+    <section class="workspace">
+      <form class="controls panel" id="analysis-form">
+        <div class="section-title">
+          <span class="step-number">01</span>
+          <div><h2>Imagenes</h2><p>Elegí una o varias fotos (JPG, PNG o WEBP; hasta 10 MB cada una).</p></div>
+        </div>
+        <label class="dropzone" id="dropzone" for="image-files">
+          <input id="image-files" type="file" accept="image/png,image/jpeg,image/webp,image/bmp" multiple required>
+          <span class="upload-icon" aria-hidden="true">↑</span>
+          <strong>Arrastra tus fotos o hace clic para buscarlas</strong>
+          <span id="selected-files">Todavia no seleccionaste imagenes</span>
+        </label>
+
+        <div class="section-title parameters-title">
+          <span class="step-number">02</span>
+          <div><h2>Ajustes del analisis</h2><p>Los valores por defecto son un punto de partida para hojas verdes.</p></div>
+        </div>
+        <div class="parameter-grid">
+          <label>Tono minimo <output id="hue-min-value">25</output>
+            <input id="hue-min" name="hue_min" type="range" min="0" max="179" value="25">
+          </label>
+          <label>Tono maximo <output id="hue-max-value">100</output>
+            <input id="hue-max" name="hue_max" type="range" min="0" max="179" value="100">
+          </label>
+          <label>Saturacion minima <output id="saturation-value">35</output>
+            <input id="saturation-min" name="saturation_min" type="range" min="0" max="255" value="35">
+          </label>
+          <label>Brillo minimo <output id="value-value">30</output>
+            <input id="value-min" name="value_min" type="range" min="0" max="255" value="30">
+          </label>
+          <label class="select-label">Kernel morfologico
+            <select id="kernel-size" name="kernel_size">
+              <option value="3">3 × 3</option>
+              <option value="5" selected>5 × 5</option>
+              <option value="7">7 × 7</option>
+              <option value="9">9 × 9</option>
+            </select>
+          </label>
+          <label>Area minima <output id="area-value">1%</output>
+            <input id="min-area-ratio" name="min_area_ratio" type="range" min="0" max="20" value="1">
+          </label>
+        </div>
+        <button class="primary-button" id="analyze-button" type="submit">Analizar imagenes <span aria-hidden="true">→</span></button>
+        <p class="form-message" id="form-message" role="status"></p>
+      </form>
+
+      <aside class="explanation panel">
+        <p class="eyebrow">¿QUE VAS A VER?</p>
+        <ol>
+          <li><b>HSV</b><span>Separa el tono del brillo para seleccionar los verdes con una mascara.</span></li>
+          <li><b>Morfologia</b><span>Apertura y cierre reducen ruido y rellenan huecos pequenos.</span></li>
+          <li><b>Contorno</b><span>El contorno externo mas grande permite estimar area, perimetro y proporcion.</span></li>
+        </ol>
+        <p class="caveat">Las medidas estan en pixeles: sin una referencia de escala no representan centimetros. Un fondo simple y luz pareja mejoran la segmentacion.</p>
+      </aside>
+    </section>
+
+    <section class="results" id="results" aria-live="polite">
+      <div class="results-heading">
+        <div><p class="eyebrow">RESULTADOS</p><h2>Tu analisis</h2></div>
+        <span id="result-count"></span>
+      </div>
+      <div id="result-list" class="result-list">
+        <div class="empty-state"><span aria-hidden="true">◌</span><p>Cuando analices una foto, aca vas a ver cada etapa del procesamiento.</p></div>
+      </div>
+    </section>
+  </main>
+  <script src="app.js?v=2"></script>
+</body>
+</html>
